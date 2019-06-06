@@ -14,6 +14,7 @@ func main() {
 	//fmt.Println(response)
 	//fmt.Println(err)
 	http.HandleFunc("/", webhookHandler)
+	log.Println("[main] Listening to port 80")
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
@@ -25,7 +26,6 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	body := fmt.Sprint(string(bodyData))
-	query := fmt.Sprint(request.URL.RawQuery)
 	writer.WriteHeader(200)
-	fmt.Fprint(writer, body + "\n\n" + query)
+	fmt.Fprint(writer, "Body:"+body+"\nQuery:"+request.URL.RawQuery)
 }
