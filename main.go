@@ -27,5 +27,6 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 	body := fmt.Sprint(string(bodyData))
 	writer.WriteHeader(200)
+	log.Println("Body:" + body + "\nQuery:" + request.URL.RawQuery)
 	fmt.Fprint(writer, "Body:"+body+"\nQuery:"+request.URL.RawQuery)
 }
