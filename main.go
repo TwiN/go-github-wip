@@ -31,7 +31,6 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	writer.WriteHeader(200)
 	pullRequestEvent := github.PullRequestEvent{}
 	json.Unmarshal(bodyData, &pullRequestEvent)
-	pullRequestEvent.GetPullRequest().GetTitle()
 	log.Println("Title:" + pullRequestEvent.GetPullRequest().GetTitle())
 	// If title starts with "WIP" or "[WIP]", then set task to in progress (see https://github.com/wip/app)
 	fmt.Fprint(writer, "Title:"+pullRequestEvent.GetPullRequest().GetTitle())
