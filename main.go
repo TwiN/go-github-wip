@@ -25,10 +25,16 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(500)
 		return
 	}
-	writer.WriteHeader(200)
 	pullRequestEvent := github.PullRequestEvent{}
-	_ = json.Unmarshal(bodyData, &pullRequestEvent)
-	log.Println("Title:" + pullRequestEvent.GetPullRequest().GetTitle())
+	err = json.Unmarshal(bodyData, &pullRequestEvent)
+	if err != nil {
+		log.Println("[webhookHandler] Ignoring request, because its body couldn't be unmarshalled to a PullRequestEvent")
+		// This isn't a pull request event, ignore the request.
+		writer.WriteHeader(400)
+		return
+	}
+	writer.WriteHeader(200)
+	log.Println("[webhookHandler] Title: " + pullRequestEvent.GetPullRequest().GetTitle())
 	// If title starts with "[WIP]", then set task to in progress (see https://github.com/wip/app)
 	if strings.HasPrefix(pullRequestEvent.GetPullRequest().GetTitle(), "[WIP]") {
 		pr := pullRequestEvent.GetPullRequest()

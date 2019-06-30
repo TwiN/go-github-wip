@@ -28,8 +28,8 @@ func createGithubClient(appId, installationId int64) *github.Client {
 }
 
 func SetAsWip(userName, repositoryName, branch, commit string, appId, installationId int64) *github.CheckRun {
+	log.Printf("[SetAsWip] Creating WIP CheckRun on branch %s from repository %s/%s to WIP", branch, userName, repositoryName)
 	client, ctx := GetGithubClient(appId, installationId)
-
 	status := "in_progress"
 	outputTitle := "Do not merge!"
 	outputSummary := "Do not merge!"
@@ -60,6 +60,7 @@ func SetAsWip(userName, repositoryName, branch, commit string, appId, installati
 }
 
 func ClearWip(userName, repositoryName, branch, commit string, appId, installationId int64, checkRunId int64) {
+	log.Printf("[ClearWip] Clearing WIP CheckRun on branch %s from repository %s/%s to WIP", branch, userName, repositoryName)
 	client, ctx := GetGithubClient(appId, installationId)
 	status := "completed"
 	conclusion := "success"
