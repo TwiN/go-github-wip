@@ -30,12 +30,12 @@ docker run --name go-github-wip -p 0.0.0.0:80:80 twinproduction/go-github-wip
 
 ## Environment variables
 
-You must set `GO_GITHUB_WIP_APP_PRIVATE_KEY_PATH` to the path of your Github App private key.
+You must set `GO_GITHUB_WIP_APP_PRIVATE_KEY` to the name of the file containing your Github App private key.
 
 e.g.
 
 ```
-GO_GITHUB_WIP_APP_PRIVATE_KEY_PATH=/somewhere/github-app-private-key.pem
+GO_GITHUB_WIP_APP_PRIVATE_KEY="github-app-private-key.pem"
 ```
 
 
