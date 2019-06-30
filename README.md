@@ -10,6 +10,7 @@ A very small Docker image that...
 - [go-github-wip](#go-github-wip)
   * [Table of Contents](#table-of-contents)
   * [Usage](#usage)
+  * [Environment variables](#environment-variables)
 
 
 ## Usage
@@ -25,6 +26,18 @@ Run it:
 ```
 docker run --name go-github-wip -p 0.0.0.0:80:80 twinproduction/go-github-wip
 ```
+
+
+## Environment variables
+
+You must set `GO_GITHUB_WIP_APP_PRIVATE_KEY_PATH` to the path of your Github App private key.
+
+e.g.
+
+```
+GO_GITHUB_WIP_APP_PRIVATE_KEY_PATH=/somewhere/github-app-private-key.pem
+```
+
 
 ### Building locally
 
