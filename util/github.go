@@ -2,12 +2,12 @@ package util
 
 import (
 	"context"
+	"github.com/TwinProduction/go-github-wip/config"
 	"github.com/bradleyfalzon/ghinstallation"
 	"github.com/google/go-github/v25/github"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -16,13 +16,16 @@ const (
 )
 
 func GetGithubClient(appId, installationId int64) (*github.Client, context.Context) {
+	if appId == 0 {
+		appId = config.GetConfig().GetAppId()
+	}
 	return createGithubClient(appId, installationId), context.Background()
 }
 
 func createGithubClient(appId, installationId int64) *github.Client {
 	log.Printf("[createGithubClient] Creating client for appId=%d and installationId=%d\n", int(appId), int(installationId))
 	transport := http.DefaultTransport
-	itr, err := ghinstallation.NewKeyFromFile(transport, int(appId), int(installationId), os.Getenv("GO_GITHUB_WIP_APP_PRIVATE_KEY"))
+	itr, err := ghinstallation.NewKeyFromFile(transport, int(appId), int(installationId), config.GetConfig().GetPrivateKeyFileName())
 	if err != nil {
 		log.Fatal(err)
 	}
