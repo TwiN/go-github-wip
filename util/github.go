@@ -122,5 +122,5 @@ func GetCheckRunId(owner, repository, branch string, appId, installationId int64
 		log.Printf("[GetCheckRunId] Response body: %s\n", body)
 	}
 
-	return *listCheckRuns.CheckRuns[0].ID
+	return listCheckRuns.CheckRuns[0].GetID()
 }
