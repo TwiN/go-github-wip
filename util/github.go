@@ -26,6 +26,13 @@ func createGithubClient(appId, installationId int64) *github.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// DEBUG START
+	tkn, err := itr.Token()
+	println("Token=" + tkn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// DEBUG END
 	return github.NewClient(&http.Client{Transport: itr})
 }
 
