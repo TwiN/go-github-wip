@@ -31,9 +31,9 @@ func createGithubClient(appId, installationId int64) *github.Client {
 	}
 	// DEBUG START
 	tkn, err := itr.Token()
-	println("Token=" + tkn)
+	log.Printf("[createGithubClient] Token=%s\n", tkn)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("[createGithubClient] Failed to get token: %v\n", err)
 	}
 	// DEBUG END
 	return github.NewClient(&http.Client{Transport: itr})

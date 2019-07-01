@@ -1,6 +1,8 @@
 package config
 
 import (
+	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 )
@@ -29,7 +31,14 @@ func GetConfig() *Config {
 			appId:              int64(appIdAsInt),
 			privateKeyFileName: os.Getenv("GO_GITHUB_WIP_APP_PRIVATE_KEY"),
 		}
-		println(&config)
+		// DEBUG START
+		println(config.privateKeyFileName)
+		data, err := ioutil.ReadFile(config.privateKeyFileName)
+		if err != nil {
+			log.Printf("[GetConfig] Error: %v\n", err)
+		}
+		println(string(data))
+		// DEBUG END
 	}
 	return config
 }
