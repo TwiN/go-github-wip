@@ -12,10 +12,14 @@ import (
 )
 
 const (
-	CheckRunName = "Work in Progress"
+	CheckRunName        = "Work in Progress"
+	WipLabelName        = "wip"
+	WipLabelColor       = "FBCA04"
+	WipLabelDescription = "Work in progress"
 )
 
 func GetGithubClient(installationId int64) (*github.Client, context.Context) {
+	// TODO: Cache client based on installationId
 	return createGithubClient(installationId), context.Background()
 }
 
@@ -112,7 +116,6 @@ func ClearWip(userName, repositoryName, branch, commit string, installationId in
 
 func GetCheckRunId(owner, repository, branch string, installationId int64) int64 {
 	client, ctx := GetGithubClient(installationId)
-
 	checkRunName := CheckRunName
 	listCheckRuns, resp, err := client.Checks.ListCheckRunsForRef(
 		ctx,
@@ -138,4 +141,97 @@ func GetCheckRunId(owner, repository, branch string, installationId int64) int64
 	}
 
 	return listCheckRuns.CheckRuns[0].GetID()
+}
+
+func ToggleWipLabelOnIssue(userName, repositoryName string, issueNumber int, installationId int64, addLabel bool) {
+	var verb string
+	if addLabel {
+		verb = "Adding"
+	} else {
+		verb = "Removing"
+	}
+	log.Printf("[toggleWipLabelOnIssue] %s WIP label on %s/%s#%d\n", verb, userName, repositoryName, issueNumber)
+	client, ctx := GetGithubClient(installationId)
+
+	createWipLabelIfNotExist(userName, repositoryName, installationId)
+
+	var labels []*github.Label
+	var resp *github.Response
+	var err error
+
+	if addLabel {
+		labels, resp, err = client.Issues.AddLabelsToIssue(
+			ctx,
+			userName,
+			repositoryName,
+			issueNumber,
+			[]string{WipLabelName},
+		)
+	} else {
+		resp, err = client.Issues.RemoveLabelForIssue(
+			ctx,
+			userName,
+			repositoryName,
+			issueNumber,
+			WipLabelName,
+		)
+	}
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if config.Get().IsDebugging() {
+		if labels != nil {
+			log.Printf("[toggleWipLabelOnIssue] Response body: %v\n", labels)
+		} else {
+			body, _ := ioutil.ReadAll(resp.Body)
+			log.Printf("[toggleWipLabelOnIssue] Response body: %s\n", body)
+		}
+	}
+}
+
+func createWipLabelIfNotExist(userName, repositoryName string, installationId int64) {
+	// TODO: Create cache with key "userName/repositoryName" and value representing whether the label has already been created
+	client, ctx := GetGithubClient(installationId)
+	_, resp, err := client.Issues.GetLabel(
+		ctx,
+		userName,
+		repositoryName,
+		WipLabelName,
+	)
+	if err != nil {
+		if resp.StatusCode == 404 {
+			err = nil
+			labelName := WipLabelName
+			labelColor := WipLabelColor
+			labelDescription := WipLabelDescription
+
+			// Create label
+			label, _, err := client.Issues.CreateLabel(
+				ctx,
+				userName,
+				repositoryName,
+				&github.Label{
+					Name:        &labelName,
+					Color:       &labelColor,
+					Description: &labelDescription,
+				},
+			)
+			if err != nil {
+				panic(err.Error())
+			}
+			log.Printf("[createWipLabelIfNotExist] Successfully created label '%s' on %s/%s\n", WipLabelName, userName, repositoryName)
+			if config.Get().IsDebugging() {
+				if label != nil {
+					log.Printf("[createWipLabelIfNotExist] Response body: %v\n", label)
+				} else {
+					body, _ := ioutil.ReadAll(resp.Body)
+					log.Printf("[createWipLabelIfNotExist] Response body: %s\n", body)
+				}
+			}
+		} else {
+			panic(err)
+		}
+	}
 }
