@@ -2,7 +2,9 @@
 
 [![Docker pulls](https://img.shields.io/docker/pulls/twinproduction/go-github-wip.svg)](https://cloud.docker.com/repository/docker/twinproduction/go-github-wip)
 
-A very small Docker image that...
+**go-github-wip** is an application that creates a GitHub check run on pull requests that 
+have a title starting with `[WIP]`. This is used in order to prevent collaborators from
+accidentally merging a PR that isn't completed yet.
 
 
 ## Table of Contents
@@ -36,6 +38,18 @@ e.g.
 
 ```
 GO_GITHUB_WIP_APP_PRIVATE_KEY="github-app-private-key.pem"
+```
+
+You must also specify the ID of your GitHub application using `GO_GITHUB_WIP_APP_ID`:
+
+```
+GO_GITHUB_WIP_APP_ID="12345"
+```
+
+Optionally, you can also enable debugging by setting the `GO_GITHUB_WIP_DEBUG` to `true`:
+
+```
+GO_GITHUB_WIP_DEBUG="true"
 ```
 
 

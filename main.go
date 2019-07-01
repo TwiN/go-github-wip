@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/TwinProduction/go-github-wip/config"
 	"github.com/TwinProduction/go-github-wip/util"
 	"github.com/google/go-github/v25/github"
 	"io/ioutil"
@@ -33,34 +34,41 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	writer.WriteHeader(200)
-	log.Printf("[webhookHandler] Title: %s\n", pullRequestEvent.GetPullRequest().GetTitle())
-	// If title starts with "[WIP]", then set task to in progress (see https://github.com/wip/app)
+	log.Printf(
+		"[webhookHandler] Got a PR event from %s/%s#%d with title: %s\n",
+		pullRequestEvent.Repo.Owner.GetLogin(),
+		pullRequestEvent.Repo.GetName(),
+		pullRequestEvent.PullRequest.GetID(),
+		pullRequestEvent.GetPullRequest().GetTitle(),
+	)
+	// If title starts with "[WIP]", then set task to in progress
 	if strings.HasPrefix(pullRequestEvent.GetPullRequest().GetTitle(), "[WIP]") {
-		log.Printf("[webhookHandler] (SetAsWip) Body: %v\n", pullRequestEvent)
+		if config.Get().IsDebugging() {
+			log.Printf("[webhookHandler] (SetAsWip) Body: %v\n", pullRequestEvent)
+		}
 		pr := pullRequestEvent.GetPullRequest()
 		util.SetAsWip(
 			pullRequestEvent.Repo.Owner.GetLogin(),
 			pullRequestEvent.Repo.GetName(),
 			pr.Head.GetRef(),
 			pr.Head.GetSHA(),
-			pullRequestEvent.Installation.GetAppID(),
 			pullRequestEvent.Installation.GetID(),
 		)
 	} else if strings.HasPrefix(*pullRequestEvent.GetChanges().Title.From, "[WIP]") {
-		log.Printf("[webhookHandler] (ClearWip) Body: %v\n", pullRequestEvent)
+		if config.Get().IsDebugging() {
+			log.Printf("[webhookHandler] (ClearWip) Body: %v\n", pullRequestEvent)
+		}
 		pr := pullRequestEvent.GetPullRequest()
 		util.ClearWip(
 			pullRequestEvent.Repo.Owner.GetLogin(),
 			pullRequestEvent.Repo.GetName(),
 			pr.Head.GetRef(),
 			pr.Head.GetSHA(),
-			pullRequestEvent.Installation.GetAppID(),
 			pullRequestEvent.Installation.GetID(),
 			util.GetCheckRunId(
 				pullRequestEvent.Repo.Owner.GetLogin(),
 				pullRequestEvent.Repo.GetName(),
 				pr.Head.GetRef(),
-				pullRequestEvent.Installation.GetAppID(),
 				pullRequestEvent.Installation.GetID(),
 			),
 		)
