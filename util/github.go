@@ -104,7 +104,7 @@ func GetCheckRunId(owner, repository, branch string, appId, installationId int64
 	client, ctx := GetGithubClient(appId, installationId)
 
 	checkRunName := CheckRunName
-	checkRun, resp, err := client.Checks.ListCheckRunsForRef(
+	listCheckRuns, resp, err := client.Checks.ListCheckRunsForRef(
 		ctx,
 		owner,
 		repository,
@@ -115,8 +115,8 @@ func GetCheckRunId(owner, repository, branch string, appId, installationId int64
 	)
 
 	log.Printf("[GetCheckRunId] Response status: %s\n", resp.Status)
-	if checkRun != nil {
-		log.Printf("[GetCheckRunId] Response body: %v\n", checkRun)
+	if listCheckRuns != nil {
+		log.Printf("[GetCheckRunId] Response body: %v\n", listCheckRuns)
 	} else {
 		body, _ := ioutil.ReadAll(resp.Body)
 		log.Printf("[GetCheckRunId] Response body: %s\n", body)
@@ -126,5 +126,5 @@ func GetCheckRunId(owner, repository, branch string, appId, installationId int64
 		panic(err.Error())
 	}
 
-	return *checkRun.CheckRuns[0].ID
+	return *listCheckRuns.CheckRuns[0].ID
 }

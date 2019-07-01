@@ -40,7 +40,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	if strings.HasPrefix(pullRequestEvent.GetPullRequest().GetTitle(), "[WIP]") {
 		pr := pullRequestEvent.GetPullRequest()
 		util.SetAsWip(
-			pullRequestEvent.Repo.Owner.GetName(),
+			pullRequestEvent.Repo.Owner.GetLogin(),
 			pullRequestEvent.Repo.GetName(),
 			pr.Head.GetRef(),
 			pr.Head.GetSHA(),
@@ -50,14 +50,14 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	} else if strings.HasPrefix(*pullRequestEvent.GetChanges().Title.From, "[WIP]") {
 		pr := pullRequestEvent.GetPullRequest()
 		util.ClearWip(
-			pullRequestEvent.Repo.Owner.GetName(),
+			pullRequestEvent.Repo.Owner.GetLogin(),
 			pullRequestEvent.Repo.GetName(),
 			pr.Head.GetRef(),
 			pr.Head.GetSHA(),
 			pullRequestEvent.Installation.GetAppID(),
 			pullRequestEvent.Installation.GetID(),
 			util.GetCheckRunId(
-				pullRequestEvent.Repo.Owner.GetName(),
+				pullRequestEvent.Repo.Owner.GetLogin(),
 				pullRequestEvent.Repo.GetName(),
 				pr.Head.GetRef(),
 				pullRequestEvent.Installation.GetAppID(),
