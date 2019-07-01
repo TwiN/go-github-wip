@@ -34,7 +34,8 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	writer.WriteHeader(200)
-	log.Println("[webhookHandler] Title: " + pullRequestEvent.GetPullRequest().GetTitle())
+	log.Printf("[webhookHandler] Title: %s\n", pullRequestEvent.GetPullRequest().GetTitle())
+	log.Printf("[webhookHandler] Body: %v\n", pullRequestEvent)
 	// If title starts with "[WIP]", then set task to in progress (see https://github.com/wip/app)
 	if strings.HasPrefix(pullRequestEvent.GetPullRequest().GetTitle(), "[WIP]") {
 		pr := pullRequestEvent.GetPullRequest()
