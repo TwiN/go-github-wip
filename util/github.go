@@ -20,6 +20,7 @@ func GetGithubClient(appId, installationId int64) (*github.Client, context.Conte
 }
 
 func createGithubClient(appId, installationId int64) *github.Client {
+	log.Printf("[createGithubClient] Creating client for appId=%d and installationId=%d\n", int(appId), int(installationId))
 	transport := http.DefaultTransport
 	itr, err := ghinstallation.NewKeyFromFile(transport, int(appId), int(installationId), os.Getenv("GO_GITHUB_WIP_APP_PRIVATE_KEY"))
 	if err != nil {
