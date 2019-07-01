@@ -49,6 +49,9 @@ func SetAsWip(userName, repositoryName, branch, commit string, appId, installati
 			},
 		},
 	)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	log.Printf("[SetAsWip] Response status: %s\n", resp.Status)
 	if checkRun != nil {
@@ -57,11 +60,6 @@ func SetAsWip(userName, repositoryName, branch, commit string, appId, installati
 		body, _ := ioutil.ReadAll(resp.Body)
 		log.Printf("[SetAsWip] Response body: %s\n", body)
 	}
-
-	if err != nil {
-		panic(err.Error())
-	}
-
 	return checkRun
 }
 
@@ -86,6 +84,9 @@ func ClearWip(userName, repositoryName, branch, commit string, appId, installati
 			},
 		},
 	)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	log.Printf("[ClearWip] Response status: %s\n", resp.Status)
 	if checkRun != nil {
@@ -93,10 +94,6 @@ func ClearWip(userName, repositoryName, branch, commit string, appId, installati
 	} else {
 		body, _ := ioutil.ReadAll(resp.Body)
 		log.Printf("[ClearWip] Response body: %s\n", body)
-	}
-
-	if err != nil {
-		panic(err.Error())
 	}
 }
 
@@ -113,6 +110,9 @@ func GetCheckRunId(owner, repository, branch string, appId, installationId int64
 			CheckName: &checkRunName,
 		},
 	)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	log.Printf("[GetCheckRunId] Response status: %s\n", resp.Status)
 	if listCheckRuns != nil {
@@ -120,10 +120,6 @@ func GetCheckRunId(owner, repository, branch string, appId, installationId int64
 	} else {
 		body, _ := ioutil.ReadAll(resp.Body)
 		log.Printf("[GetCheckRunId] Response body: %s\n", body)
-	}
-
-	if err != nil {
-		panic(err.Error())
 	}
 
 	return *listCheckRuns.CheckRuns[0].ID
