@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/TwinProduction/go-github-wip/util"
 	"github.com/google/go-github/v25/github"
 	"io/ioutil"
@@ -35,9 +34,9 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 	writer.WriteHeader(200)
 	log.Printf("[webhookHandler] Title: %s\n", pullRequestEvent.GetPullRequest().GetTitle())
-	log.Printf("[webhookHandler] Body: %v\n", pullRequestEvent)
 	// If title starts with "[WIP]", then set task to in progress (see https://github.com/wip/app)
 	if strings.HasPrefix(pullRequestEvent.GetPullRequest().GetTitle(), "[WIP]") {
+		//log.Printf("[webhookHandler] Body: %v\n", pullRequestEvent)
 		pr := pullRequestEvent.GetPullRequest()
 		util.SetAsWip(
 			pullRequestEvent.Repo.Owner.GetLogin(),
@@ -48,6 +47,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			pullRequestEvent.Installation.GetID(),
 		)
 	} else if strings.HasPrefix(*pullRequestEvent.GetChanges().Title.From, "[WIP]") {
+		//log.Printf("[webhookHandler] Body: %v\n", pullRequestEvent)
 		pr := pullRequestEvent.GetPullRequest()
 		util.ClearWip(
 			pullRequestEvent.Repo.Owner.GetLogin(),
@@ -65,5 +65,4 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			),
 		)
 	}
-	fmt.Fprint(writer, "Title:"+pullRequestEvent.GetPullRequest().GetTitle())
 }
