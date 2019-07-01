@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/bradleyfalzon/ghinstallation"
 	"github.com/google/go-github/v25/github"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -49,13 +50,18 @@ func SetAsWip(userName, repositoryName, branch, commit string, appId, installati
 		},
 	)
 
-	log.Printf("[SetAsWip] %v\n", checkRun)
+	log.Printf("[SetAsWip] Response status: %s\n", resp.Status)
+	if checkRun != nil {
+		log.Printf("[SetAsWip] Response body: %v\n", checkRun)
+	} else {
+		body, _ := ioutil.ReadAll(resp.Body)
+		log.Printf("[SetAsWip] Response body: %s\n", body)
+	}
 
 	if err != nil {
 		panic(err.Error())
 	}
 
-	log.Printf("[SetAsWip] Response: %s\n", resp.Status)
 	return checkRun
 }
 
@@ -81,13 +87,17 @@ func ClearWip(userName, repositoryName, branch, commit string, appId, installati
 		},
 	)
 
-	log.Printf("[ClearWip] %v\n", checkRun)
+	log.Printf("[ClearWip] Response status: %s\n", resp.Status)
+	if checkRun != nil {
+		log.Printf("[ClearWip] Response body: %v\n", checkRun)
+	} else {
+		body, _ := ioutil.ReadAll(resp.Body)
+		log.Printf("[ClearWip] Response body: %s\n", body)
+	}
 
 	if err != nil {
 		panic(err.Error())
 	}
-
-	log.Printf("[ClearWip] Response: %s\n", resp.Status)
 }
 
 func GetCheckRunId(owner, repository, branch string, appId, installationId int64) int64 {
@@ -104,12 +114,17 @@ func GetCheckRunId(owner, repository, branch string, appId, installationId int64
 		},
 	)
 
-	log.Printf("[GetCheckRunId] %v\n", checkRun)
+	log.Printf("[GetCheckRunId] Response status: %s\n", resp.Status)
+	if checkRun != nil {
+		log.Printf("[GetCheckRunId] Response body: %v\n", checkRun)
+	} else {
+		body, _ := ioutil.ReadAll(resp.Body)
+		log.Printf("[GetCheckRunId] Response body: %s\n", body)
+	}
 
 	if err != nil {
 		panic(err.Error())
 	}
 
-	log.Printf("[GetCheckRunId] Response: %s\n", resp.Status)
 	return *checkRun.CheckRuns[0].ID
 }
