@@ -30,13 +30,15 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		log.Println("[webhookHandler] Ignoring request, because its body couldn't be unmarshalled to a PullRequestEvent")
 		// This isn't a pull request event, ignore the request.
 		return
-	} else if pullRequestEvent.GetAction() != "edited" && pullRequestEvent.GetAction() != "opened" {
+	} else if pullRequestEvent.GetAction() != "edited" && pullRequestEvent.GetAction() != "opened" && pullRequestEvent.GetAction() != "synchronize" {
+		if config.Get().IsDebugging() {
+			if isActionCompletelyIgnored(pullRequestEvent.GetAction()) {
+				log.Printf("[webhookHandler] Got a non-edit event: %v\n\n", string(bodyData))
+			}
+		}
 		// Ignore pull request events that don't modify the title
-		log.Printf("[webhookHandler] Got a non-edit event: %v\n\n", string(bodyData))
 		return
 	}
-
-	// FIXME: If it's a new commit, remove old check run on old commit, and apply it on the new commit.
 
 	writer.WriteHeader(200)
 	log.Printf(
@@ -104,4 +106,9 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			false,
 		)
 	}
+}
+
+// Events that we really don't care about can just be plainly ignored
+func isActionCompletelyIgnored(action string) bool {
+	return action == "labeled"
 }
