@@ -32,6 +32,11 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(400)
 		return
 	}
+
+	if pullRequestEvent.GetSender().GetType() == "Bot" {
+		println("It's a bot!")
+	}
+	println(pullRequestEvent.GetChanges())
 	writer.WriteHeader(200)
 	log.Printf(
 		"[webhookHandler] Got a PR event from %s/%s#%d with title: %s\n",
