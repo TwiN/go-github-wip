@@ -2,7 +2,7 @@
 
 [![Docker pulls](https://img.shields.io/docker/pulls/twinproduction/go-github-wip.svg)](https://cloud.docker.com/repository/docker/twinproduction/go-github-wip)
 
-A very small Docker image that test
+A very small Docker image that test wat
 
 
 ## Table of Contents
