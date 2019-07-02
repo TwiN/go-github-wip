@@ -30,7 +30,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		log.Println("[webhookHandler] Ignoring request, because its body couldn't be unmarshalled to a PullRequestEvent")
 		// This isn't a pull request event, ignore the request.
 		return
-	} else if pullRequestEvent.GetAction() == "edited" {
+	} else if pullRequestEvent.GetAction() != "edited" && pullRequestEvent.GetAction() != "opened" {
 		// Ignore pull request events that don't modify the title
 		return
 	}
