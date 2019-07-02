@@ -17,7 +17,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
-// See https://github.com/gdperkins/gondle/blob/master/consumer.go
 func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	bodyData, err := ioutil.ReadAll(request.Body)
 	if err != nil {
@@ -52,6 +51,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetInstallation().GetID())
 		}
 		pr := pullRequestEvent.GetPullRequest()
+		println("[A]")
 		util.SetAsWip(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),
@@ -59,6 +59,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			pr.GetHead().GetSHA(),
 			pullRequestEvent.GetInstallation().GetID(),
 		)
+		println("[B]")
 		util.ToggleWipLabelOnIssue(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),
@@ -76,6 +77,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetInstallation().GetID())
 		}
 		pr := pullRequestEvent.GetPullRequest()
+		println("[C]")
 		util.ClearWip(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),
@@ -89,6 +91,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 				pullRequestEvent.GetInstallation().GetID(),
 			),
 		)
+		println("[D]")
 		util.ToggleWipLabelOnIssue(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),

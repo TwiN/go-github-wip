@@ -32,8 +32,7 @@ func createGithubClient(installationId int64) *github.Client {
 		log.Fatal(err)
 	}
 	if config.Get().IsDebugging() {
-		tkn, err := itr.Token()
-		log.Printf("[createGithubClient] Token=%s\n", tkn)
+		_, err := itr.Token()
 		if err != nil {
 			log.Printf("[createGithubClient] Failed to get token: %v\n", err)
 		}
@@ -71,7 +70,10 @@ func SetAsWip(userName, repositoryName, branch, commit string, installationId in
 		if checkRun != nil {
 			log.Printf("[SetAsWip] Response body: %v\n", checkRun)
 		} else {
-			body, _ := ioutil.ReadAll(resp.Body)
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				panic(err.Error())
+			}
 			log.Printf("[SetAsWip] Response body: %s\n", body)
 		}
 	}
@@ -108,7 +110,10 @@ func ClearWip(userName, repositoryName, branch, commit string, installationId in
 		if checkRun != nil {
 			log.Printf("[ClearWip] Response body: %v\n", checkRun)
 		} else {
-			body, _ := ioutil.ReadAll(resp.Body)
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				panic(err.Error())
+			}
 			log.Printf("[ClearWip] Response body: %s\n", body)
 		}
 	}
@@ -135,7 +140,10 @@ func GetCheckRunId(owner, repository, branch string, installationId int64) int64
 		if listCheckRuns != nil {
 			log.Printf("[GetCheckRunId] Response body: %v\n", listCheckRuns)
 		} else {
-			body, _ := ioutil.ReadAll(resp.Body)
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				panic(err.Error())
+			}
 			log.Printf("[GetCheckRunId] Response body: %s\n", body)
 		}
 	}
@@ -185,7 +193,10 @@ func ToggleWipLabelOnIssue(userName, repositoryName string, issueNumber int, ins
 		if labels != nil {
 			log.Printf("[toggleWipLabelOnIssue] Response body: %v\n", labels)
 		} else {
-			body, _ := ioutil.ReadAll(resp.Body)
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				panic(err.Error())
+			}
 			log.Printf("[toggleWipLabelOnIssue] Response body: %s\n", body)
 		}
 	}
@@ -226,7 +237,10 @@ func createWipLabelIfNotExist(userName, repositoryName string, installationId in
 				if label != nil {
 					log.Printf("[createWipLabelIfNotExist] Response body: %v\n", label)
 				} else {
-					body, _ := ioutil.ReadAll(resp.Body)
+					body, err := ioutil.ReadAll(resp.Body)
+					if err != nil {
+						panic(err.Error())
+					}
 					log.Printf("[createWipLabelIfNotExist] Response body: %s\n", body)
 				}
 			}
