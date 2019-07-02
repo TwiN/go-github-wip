@@ -29,14 +29,15 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		log.Println("[webhookHandler] Ignoring request, because its body couldn't be unmarshalled to a PullRequestEvent")
 		// This isn't a pull request event, ignore the request.
-		writer.WriteHeader(400)
+		return
+	} else if pullRequestEvent.GetAction() == "edited" {
+		// Ignore pull request events that don't modify the title
 		return
 	}
 
-	if pullRequestEvent.GetSender().GetType() == "Bot" {
-		println("It's a bot!")
-	}
-	println(pullRequestEvent.GetChanges())
+	// FIXME: If it's a new commit, remove old check run on old commit, and apply it on the new commit.
+	// Or should the check runs be converted to a check suite instead?
+
 	writer.WriteHeader(200)
 	log.Printf(
 		"[webhookHandler] Got a PR event from %s/%s#%d with title: %s\n",
