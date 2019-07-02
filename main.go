@@ -32,11 +32,11 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	} else if pullRequestEvent.GetAction() != "edited" && pullRequestEvent.GetAction() != "opened" {
 		// Ignore pull request events that don't modify the title
+		log.Printf("[webhookHandler] Got a non-edit event: %v\n\n", string(bodyData))
 		return
 	}
 
 	// FIXME: If it's a new commit, remove old check run on old commit, and apply it on the new commit.
-	// Or should the check runs be converted to a check suite instead?
 
 	writer.WriteHeader(200)
 	log.Printf(
@@ -83,7 +83,6 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetInstallation().GetID())
 		}
 		pr := pullRequestEvent.GetPullRequest()
-		println("[C]")
 		util.ClearWip(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),
@@ -97,7 +96,6 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 				pullRequestEvent.GetInstallation().GetID(),
 			),
 		)
-		println("[D]")
 		util.ToggleWipLabelOnIssue(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),

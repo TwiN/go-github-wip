@@ -164,11 +164,10 @@ func ToggleWipLabelOnIssue(userName, repositoryName string, issueNumber int, ins
 	createWipLabelIfNotExist(userName, repositoryName, installationId)
 
 	var labels []*github.Label
-	var resp *github.Response
 	var err error
 
 	if addLabel {
-		labels, resp, err = client.Issues.AddLabelsToIssue(
+		labels, _, err = client.Issues.AddLabelsToIssue(
 			ctx,
 			userName,
 			repositoryName,
@@ -176,7 +175,7 @@ func ToggleWipLabelOnIssue(userName, repositoryName string, issueNumber int, ins
 			[]string{WipLabelName},
 		)
 	} else {
-		resp, err = client.Issues.RemoveLabelForIssue(
+		_, err = client.Issues.RemoveLabelForIssue(
 			ctx,
 			userName,
 			repositoryName,
@@ -184,21 +183,11 @@ func ToggleWipLabelOnIssue(userName, repositoryName string, issueNumber int, ins
 			WipLabelName,
 		)
 	}
-
 	if err != nil {
 		panic(err.Error())
 	}
-
-	if config.Get().IsDebugging() {
-		if labels != nil {
-			log.Printf("[toggleWipLabelOnIssue] Response body: %v\n", labels)
-		} else {
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				panic(err.Error())
-			}
-			log.Printf("[toggleWipLabelOnIssue] Response body: %s\n", body)
-		}
+	if config.Get().IsDebugging() && labels != nil {
+		log.Printf("[toggleWipLabelOnIssue] Response body: %v\n", labels)
 	}
 }
 
