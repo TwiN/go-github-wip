@@ -36,54 +36,64 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	writer.WriteHeader(200)
 	log.Printf(
 		"[webhookHandler] Got a PR event from %s/%s#%d with title: %s\n",
-		pullRequestEvent.Repo.Owner.GetLogin(),
-		pullRequestEvent.Repo.GetName(),
-		pullRequestEvent.PullRequest.GetID(),
+		pullRequestEvent.GetRepo().GetOwner().GetLogin(),
+		pullRequestEvent.GetRepo().GetName(),
+		pullRequestEvent.GetPullRequest().GetNumber(),
 		pullRequestEvent.GetPullRequest().GetTitle(),
 	)
 	// If title starts with "[WIP]", then set task to in progress
 	if strings.HasPrefix(pullRequestEvent.GetPullRequest().GetTitle(), "[WIP]") {
 		if config.Get().IsDebugging() {
 			log.Printf("[webhookHandler] (SetAsWip) Body: %v\n", pullRequestEvent)
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetRepo().GetOwner().GetLogin())
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetRepo().GetName())
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetPullRequest().GetHead().GetRef())
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetPullRequest().GetHead().GetSHA())
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetInstallation().GetID())
 		}
 		pr := pullRequestEvent.GetPullRequest()
-		go util.SetAsWip(
-			pullRequestEvent.Repo.Owner.GetLogin(),
-			pullRequestEvent.Repo.GetName(),
-			pr.Head.GetRef(),
-			pr.Head.GetSHA(),
-			pullRequestEvent.Installation.GetID(),
+		util.SetAsWip(
+			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
+			pullRequestEvent.GetRepo().GetName(),
+			pr.GetHead().GetRef(),
+			pr.GetHead().GetSHA(),
+			pullRequestEvent.GetInstallation().GetID(),
 		)
-		go util.ToggleWipLabelOnIssue(
-			pullRequestEvent.Repo.Owner.GetLogin(),
-			pullRequestEvent.Repo.GetName(),
+		util.ToggleWipLabelOnIssue(
+			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
+			pullRequestEvent.GetRepo().GetName(),
 			pr.GetNumber(),
-			pullRequestEvent.Installation.GetID(),
+			pullRequestEvent.GetInstallation().GetID(),
 			true,
 		)
 	} else if strings.HasPrefix(*pullRequestEvent.GetChanges().Title.From, "[WIP]") {
 		if config.Get().IsDebugging() {
 			log.Printf("[webhookHandler] (ClearWip) Body: %v\n", pullRequestEvent)
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetRepo().GetOwner().GetLogin())
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetRepo().GetName())
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetPullRequest().GetHead().GetRef())
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetPullRequest().GetHead().GetSHA())
+			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetInstallation().GetID())
 		}
 		pr := pullRequestEvent.GetPullRequest()
-		go util.ClearWip(
-			pullRequestEvent.Repo.Owner.GetLogin(),
-			pullRequestEvent.Repo.GetName(),
-			pr.Head.GetRef(),
-			pr.Head.GetSHA(),
-			pullRequestEvent.Installation.GetID(),
+		util.ClearWip(
+			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
+			pullRequestEvent.GetRepo().GetName(),
+			pr.GetHead().GetRef(),
+			pr.GetHead().GetSHA(),
+			pullRequestEvent.GetInstallation().GetID(),
 			util.GetCheckRunId(
-				pullRequestEvent.Repo.Owner.GetLogin(),
-				pullRequestEvent.Repo.GetName(),
-				pr.Head.GetRef(),
-				pullRequestEvent.Installation.GetID(),
+				pullRequestEvent.GetRepo().GetOwner().GetLogin(),
+				pullRequestEvent.GetRepo().GetName(),
+				pr.GetHead().GetRef(),
+				pullRequestEvent.GetInstallation().GetID(),
 			),
 		)
-		go util.ToggleWipLabelOnIssue(
-			pullRequestEvent.Repo.Owner.GetLogin(),
-			pullRequestEvent.Repo.GetName(),
+		util.ToggleWipLabelOnIssue(
+			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
+			pullRequestEvent.GetRepo().GetName(),
 			pr.GetNumber(),
-			pullRequestEvent.Installation.GetID(),
+			pullRequestEvent.GetInstallation().GetID(),
 			false,
 		)
 	}
