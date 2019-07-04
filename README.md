@@ -36,9 +36,9 @@ docker run --name go-github-wip -p 0.0.0.0:80:80 twinproduction/go-github-wip
 
 | Permission    | Access       | Use                                                         | 
 |---------------|--------------|-------------------------------------------------------------|
-| Checks        | Read & Write | Create a checksuite to prevent users from merging           |
+| Checks        | Read & Write | Create a check suite to prevent users from merging          |
 | Issues        | Read         | Check whether an issue already has a label associated to it |
-| Pull requests | Read & Write | Create/Delete a label from a PR                             |
+| Pull requests | Read & Write | Create and delete a label from a PR                         |
 
 
 ### Events:
@@ -60,6 +60,12 @@ You must also specify the ID of your GitHub application using `GO_GITHUB_WIP_APP
 
 ```
 GO_GITHUB_WIP_APP_ID="12345"
+```
+
+If you wish, you can also configure the prefix that will trigger setting a PR as `work in progress` by setting `GO_GITHUB_WIP_PREFIXES`. The values are comma separated, meaning that `WIP!,[WIP]` would set both `WIP!` and `[WIP]` as prefixes. If no prefixes are defined, it will default to `WIP` and `[WIP]`.
+
+```
+GO_GITHUB_WIP_PREFIXES="WIP,[WIP]"
 ```
 
 Optionally, you can also enable debugging by setting the `GO_GITHUB_WIP_DEBUG` to `true`:

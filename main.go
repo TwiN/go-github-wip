@@ -33,7 +33,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	} else if pullRequestEvent.GetAction() != "edited" && pullRequestEvent.GetAction() != "opened" && pullRequestEvent.GetAction() != "synchronize" {
 		if config.Get().IsDebugging() {
 			if isActionCompletelyIgnored(pullRequestEvent.GetAction()) {
-				log.Printf("[webhookHandler] Got a non-edit event: %v\n\n", string(bodyData))
+				log.Printf("[webhookHandler] Got a non-edit event: %v\n", string(bodyData))
 			}
 		}
 		// Ignore pull request events that don't modify the title
@@ -49,7 +49,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 		pullRequestEvent.GetPullRequest().GetTitle(),
 	)
 	// If title starts with "[WIP]", then set task to in progress
-	if strings.HasPrefix(pullRequestEvent.GetPullRequest().GetTitle(), "[WIP]") {
+	if config.Get().HasWipPrefix(pullRequestEvent.GetPullRequest().GetTitle()) {
 		if config.Get().IsDebugging() {
 			log.Printf("[webhookHandler] (SetAsWip) Body: %v\n", pullRequestEvent)
 			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetRepo().GetOwner().GetLogin())
@@ -59,23 +59,21 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetInstallation().GetID())
 		}
 		pr := pullRequestEvent.GetPullRequest()
-		println("[A]")
-		util.SetAsWip(
+		go util.SetAsWip(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),
 			pr.GetHead().GetRef(),
 			pr.GetHead().GetSHA(),
 			pullRequestEvent.GetInstallation().GetID(),
 		)
-		println("[B]")
-		util.ToggleWipLabelOnIssue(
+		go util.ToggleWipLabelOnIssue(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),
 			pr.GetNumber(),
 			pullRequestEvent.GetInstallation().GetID(),
 			true,
 		)
-	} else if strings.HasPrefix(*pullRequestEvent.GetChanges().Title.From, "[WIP]") {
+	} else if config.Get().HasWipPrefix(*pullRequestEvent.GetChanges().Title.From) {
 		if config.Get().IsDebugging() {
 			log.Printf("[webhookHandler] (ClearWip) Body: %v\n", pullRequestEvent)
 			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetRepo().GetOwner().GetLogin())
@@ -85,7 +83,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetInstallation().GetID())
 		}
 		pr := pullRequestEvent.GetPullRequest()
-		util.ClearWip(
+		go util.ClearWip(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),
 			pr.GetHead().GetRef(),
@@ -98,7 +96,7 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 				pullRequestEvent.GetInstallation().GetID(),
 			),
 		)
-		util.ToggleWipLabelOnIssue(
+		go util.ToggleWipLabelOnIssue(
 			pullRequestEvent.GetRepo().GetOwner().GetLogin(),
 			pullRequestEvent.GetRepo().GetName(),
 			pr.GetNumber(),
