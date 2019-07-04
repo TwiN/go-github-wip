@@ -30,6 +30,22 @@ docker run --name go-github-wip -p 0.0.0.0:80:80 twinproduction/go-github-wip
 ```
 
 
+## Github App Requirements
+
+### Permissions
+
+| Permission    | Access       | Use                                                         | 
+|---------------|--------------|-------------------------------------------------------------|
+| Checks        | Read & Write | Create a checksuite to prevent users from merging           |
+| Issues        | Read         | Check whether an issue already has a label associated to it |
+| Pull requests | Read & Write | Create/Delete a label from a PR                             |
+
+
+### Events:
+
+- Pull request
+
+
 ## Environment variables
 
 You must set `GO_GITHUB_WIP_APP_PRIVATE_KEY` to the name of the file containing your Github App private key.
