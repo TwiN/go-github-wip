@@ -2,18 +2,11 @@
 
 [![Docker pulls](https://img.shields.io/docker/pulls/twinproduction/go-github-wip.svg)](https://cloud.docker.com/repository/docker/twinproduction/go-github-wip)
 
-**go-github-wip** is an application that creates a GitHub check run on pull requests that 
-have a title starting with `[WIP]`. This is used in order to prevent collaborators from
-accidentally merging a PR that isn't completed yet.
-
-
+waw
 ## Table of Contents
 
 - [go-github-wip](#go-github-wip)
   * [Table of Contents](#table-of-contents)
-  * [Usage](#usage)
-  * [Environment variables](#environment-variables)
-
 
 ## Usage
 
