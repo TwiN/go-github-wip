@@ -12,6 +12,9 @@ accidentally merging a PR that isn't completed yet.
 - [go-github-wip](#go-github-wip)
   * [Table of Contents](#table-of-contents)
   * [Usage](#usage)
+  * [Github App Requirements](#github-app-requirements)
+    - [Permissions](#permissions)
+    - [Events](#events)
   * [Environment variables](#environment-variables)
 
 
@@ -41,7 +44,7 @@ docker run --name go-github-wip -p 0.0.0.0:80:80 twinproduction/go-github-wip
 | Pull requests | Read & Write | Create and delete a label from a PR                         |
 
 
-### Events:
+### Events
 
 - Pull request
 
