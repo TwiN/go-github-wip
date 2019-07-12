@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -35,6 +36,14 @@ func createGithubClient(installationId int64) *github.Client {
 		_, err := itr.Token()
 		if err != nil {
 			log.Printf("[createGithubClient] Failed to get token: %v\n", err)
+		}
+	}
+	if len(config.Get().GetGithubHost()) != 0 && !strings.Contains(config.Get().GetGithubHost(), "github.com") {
+		client, err := github.NewEnterpriseClient(config.Get().GetGithubHost(), config.Get().GetGithubHost(), &http.Client{Transport: itr})
+		if err != nil {
+			log.Printf("[createGitHubClient] Failed to create enterprise github client: %s\n", err.Error())
+		} else {
+			return client
 		}
 	}
 	return github.NewClient(&http.Client{Transport: itr})

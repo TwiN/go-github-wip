@@ -11,6 +11,7 @@ import (
 
 type Config struct {
 	appId              int64
+	githubHost         string
 	privateKeyFileName string
 	prefixes           []string
 	debug              bool
@@ -22,6 +23,10 @@ var (
 
 func (c *Config) GetAppId() int64 {
 	return c.appId
+}
+
+func (c *Config) GetGithubHost() string {
+	return c.githubHost
 }
 
 func (c *Config) GetPrivateKeyFileName() string {
@@ -75,8 +80,13 @@ func (c *Config) validate() {
 func Get() *Config {
 	if config == nil {
 		appIdAsInt, _ := strconv.Atoi(os.Getenv("GO_GITHUB_WIP_APP_ID"))
+		githubHost := os.Getenv("GITHUB_HOST")
+		if len(githubHost) == 0 {
+			githubHost = "github.com"
+		}
 		config = &Config{
 			appId:              int64(appIdAsInt),
+			githubHost:         githubHost,
 			privateKeyFileName: os.Getenv("GO_GITHUB_WIP_APP_PRIVATE_KEY"),
 			prefixes:           strings.Split(os.Getenv("GO_GITHUB_WIP_PREFIXES"), ","),
 			debug:              os.Getenv("GO_GITHUB_WIP_DEBUG") == "true",
