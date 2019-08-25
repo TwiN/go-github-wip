@@ -75,11 +75,11 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	} else if config.Get().HasWipPrefix(*pullRequestEvent.GetChanges().Title.From) {
 		if config.Get().IsDebugging() {
 			log.Printf("[webhookHandler] (ClearWip) Body: %v\n", pullRequestEvent)
-			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetRepo().GetOwner().GetLogin())
-			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetRepo().GetName())
-			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetPullRequest().GetHead().GetRef())
-			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetPullRequest().GetHead().GetSHA())
-			log.Printf("[webhookHandler] (SetAsWip) %v\n", pullRequestEvent.GetInstallation().GetID())
+			log.Printf("[webhookHandler] (ClearWip) %v\n", pullRequestEvent.GetRepo().GetOwner().GetLogin())
+			log.Printf("[webhookHandler] (ClearWip) %v\n", pullRequestEvent.GetRepo().GetName())
+			log.Printf("[webhookHandler] (ClearWip) %v\n", pullRequestEvent.GetPullRequest().GetHead().GetRef())
+			log.Printf("[webhookHandler] (ClearWip) %v\n", pullRequestEvent.GetPullRequest().GetHead().GetSHA())
+			log.Printf("[webhookHandler] (ClearWip) %v\n", pullRequestEvent.GetInstallation().GetID())
 		}
 		pr := pullRequestEvent.GetPullRequest()
 		go util.ClearWip(
