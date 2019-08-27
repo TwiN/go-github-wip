@@ -2,7 +2,7 @@
 github.com/bradleyfalzon/ghinstallation
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 github.com/dgrijalva/jwt-go
-# github.com/google/go-github/v25 v25.1.1
+# github.com/google/go-github/v25 v25.1.3
 github.com/google/go-github/v25/github
 # github.com/google/go-querystring v1.0.0
 github.com/google/go-querystring/query
