@@ -8,13 +8,23 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
 	config.Validate()
-	http.HandleFunc("/", webhookHandler)
-	log.Println("[main] Listening to port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	handler := http.NewServeMux()
+	handler.HandleFunc("/", webhookHandler)
+	handler.HandleFunc("/health", healthHandler)
+	server := &http.Server{
+		Addr:         ":8080",
+		Handler:      handler,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		IdleTimeout:  5 * time.Second,
+	}
+	log.Printf("[main] Listening to %s", server.Addr)
+	log.Fatal(server.ListenAndServe())
 }
 
 func webhookHandler(writer http.ResponseWriter, request *http.Request) {
@@ -27,7 +37,9 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 	pullRequestEvent := github.PullRequestEvent{}
 	err = json.Unmarshal(bodyData, &pullRequestEvent)
 	if err != nil {
-		log.Println("[webhookHandler] Ignoring request, because its body couldn't be unmarshalled to a PullRequestEvent")
+		if config.Get().IsDebugging() {
+			log.Println("[webhookHandler] Ignoring request, because its body couldn't be unmarshalled to a PullRequestEvent")
+		}
 		// This isn't a pull request event, ignore the request.
 		return
 	} else if pullRequestEvent.GetAction() != "edited" && pullRequestEvent.GetAction() != "opened" && pullRequestEvent.GetAction() != "synchronize" {
@@ -109,4 +121,9 @@ func webhookHandler(writer http.ResponseWriter, request *http.Request) {
 // Events that we really don't care about can just be plainly ignored
 func isActionCompletelyIgnored(action string) bool {
 	return action == "labeled"
+}
+
+func healthHandler(writer http.ResponseWriter, _ *http.Request) {
+	writer.WriteHeader(200)
+	_, _ = writer.Write([]byte("{\"status\": \"UP\"}"))
 }
