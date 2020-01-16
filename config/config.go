@@ -77,6 +77,10 @@ func (c *Config) validate() {
 	}
 }
 
+func Validate() {
+	Get().validate()
+}
+
 func Get() *Config {
 	if config == nil {
 		appIdAsInt, _ := strconv.Atoi(os.Getenv("GO_GITHUB_WIP_APP_ID"))
@@ -91,7 +95,6 @@ func Get() *Config {
 			prefixes:           strings.Split(os.Getenv("GO_GITHUB_WIP_PREFIXES"), ","),
 			debug:              os.Getenv("GO_GITHUB_WIP_DEBUG") == "true",
 		}
-		config.validate()
 	}
 	return config
 }
