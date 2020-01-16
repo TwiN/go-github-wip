@@ -11,9 +11,10 @@ import (
 )
 
 func main() {
+	config.Validate()
 	http.HandleFunc("/", webhookHandler)
-	log.Println("[main] Listening to port 80")
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Println("[main] Listening to port 8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func webhookHandler(writer http.ResponseWriter, request *http.Request) {

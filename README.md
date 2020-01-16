@@ -29,7 +29,7 @@ docker pull twinproduction/go-github-wip:latest
 Run it:
 
 ```
-docker run --name go-github-wip -p 0.0.0.0:80:80 twinproduction/go-github-wip
+docker run --name go-github-wip -p 0.0.0.0:8080:8080 twinproduction/go-github-wip
 ```
 
 
